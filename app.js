@@ -1,6 +1,13 @@
+require("dotenv").config({path: ".env"});
+
 const express = require("express");
+const expressSession = require("express-session");
+const passport = require("passport");
 const path = require("node:path");
 const indexRouter = require("./routes/indexRouter");
+
+const PostgresSession = require("connect-pg-simple")(expressSession);
+const pgPool = require("./config/pool");
 
 const app = express();
 
@@ -11,6 +18,23 @@ app.use(express.urlencoded({extended: true}));
 const assetsPath = path.join(__dirname, "public");
 app.use(express.static(assetsPath));
 
+// Make Session Store
+
+app.use(expressSession({
+    store: new PostgresSession({
+        pool: pgPool,
+        tableName: 'user_sessions'
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {maxAge: 30 * 24 * 60 * 60 * 1000}
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Use our indexRouter
 app.use("/", indexRouter);
 
 
