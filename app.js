@@ -37,6 +37,8 @@ app.use(passport.session());
 // Use our indexRouter
 app.use("/", indexRouter);
 
+// Require passport config
+require("./config/passport");
 
 app.listen(3000, (error) => {
     if(error) {
