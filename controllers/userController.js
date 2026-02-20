@@ -1,5 +1,6 @@
 const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 
 function renderLoginIndexPage(req, res) {
     res.render("index", {
@@ -17,7 +18,8 @@ function signUpPageGet(req, res) {
 async function signUpPagePost(req, res, next) {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        await pool.query("INSERT INTO users (fullname, password, memberstatus, isadmin) VALUES ($1, $2, $3, $4)", [
+        await pool.query("INSERT INTO users (username, fullname, password, memberstatus, isadmin) VALUES ($1, $2, $3, $4, $5)", [
+            req.body.username,
             req.body.firstName + " " + req.body.lastName,
             hashedPassword,
             false,
@@ -30,9 +32,19 @@ async function signUpPagePost(req, res, next) {
     }
 }
 
+function logOutGet(req, res, next) {
+    req.logOut((err) => {
+        if(err) {
+            return next(err);
+        }
+        res.redirect("/");
+    })
+}
+
 
 module.exports = {
     renderLoginIndexPage,
     signUpPageGet,
     signUpPagePost,
+    logOutGet
 }

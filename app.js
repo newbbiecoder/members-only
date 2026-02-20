@@ -22,8 +22,7 @@ app.use(express.static(assetsPath));
 
 app.use(expressSession({
     store: new PostgresSession({
-        pool: pgPool,
-        tableName: 'user_sessions'
+        pool: pgPool
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
