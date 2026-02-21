@@ -1,5 +1,5 @@
 const {Router} = require("express");
-const {renderLoginIndexPage, signUpPageGet, signUpPagePost, logOutGet, becomeMemberGet, becomeMemberPost, newMessageGet, newMessagePost, deleteMessagePost, updateMessageGet, updateMessagePost} = require("../controllers/userController");
+const {renderLoginIndexPage, signUpPageGet, signUpPagePost, authenticateUser, logOutGet, becomeMemberGet, becomeMemberPost, newMessageGet, newMessagePost, deleteMessagePost, updateMessageGet, updateMessagePost} = require("../controllers/userController");
 const passport = require("passport");
 const isAuth = require("./authMiddleware").isAuth;
 
@@ -8,12 +8,7 @@ const indexRouter = Router();
 indexRouter.get("/", renderLoginIndexPage);
 indexRouter.get("/sign-up", signUpPageGet);
 indexRouter.post("/sign-up", signUpPagePost);
-indexRouter.post("/log-in", 
-    passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/",
-    })
-)
+indexRouter.post("/log-in", authenticateUser)
 indexRouter.get("/become-member", isAuth, becomeMemberGet);
 indexRouter.post("/become-member", becomeMemberPost)
 indexRouter.get("/new-message", isAuth, newMessageGet);

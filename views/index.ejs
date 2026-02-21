@@ -47,6 +47,9 @@
         <% } else { %>
             <h1>Please log in</h1>
             <form action="/log-in" method="POST">
+                <% if(locals.errMessage) { %>
+                    <p><%= errMessage %></p>
+                <% } %>
                 <label for="username">Username</label>
                 <input id="username" name="username" placeholder="username" type="text" />
 

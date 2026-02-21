@@ -1,6 +1,7 @@
 const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
-const {body, validationResult, matchedData} = require("express-validator")
+const {body, validationResult, matchedData} = require("express-validator");
+const passport = require("passport");
 
 async function renderLoginIndexPage(req, res, next) {
     try {
@@ -72,13 +73,43 @@ let signUpPagePost = [
                 false,
                 false,
             ])
-            res.redirect("/");
+            res.render("index", {
+                message: info.message
+            });
         }
         catch(err) {
             return next(err);
         }
     }
 ]
+
+async function authenticateUser(req, res, next) {
+    try {
+        const {rows} = await pool.query(`
+            SELECT messages.*, users.username, users.fullname
+            FROM messages
+            LEFT JOIN users ON messages.user_id = users.id
+            ORDER BY messages.id DESC
+        `);
+        passport.authenticate("local", function(err, user, info) {
+            if(err) {return next(err)}
+            if(!user) {
+                return res.render('index', {
+                    title: "HomePage",
+                    user: req.user,
+                    messages: rows,
+                    errMessage: info.message
+                })
+            }
+            req.logIn(user, function(err) {
+                if(err) return next(err);
+                return res.redirect('/', )
+            })
+        })(req, res, next)
+    } catch(err) {
+        return next(err)
+    }
+}
 
 function logOutGet(req, res, next) {
     try {
@@ -184,6 +215,7 @@ module.exports = {
     renderLoginIndexPage,
     signUpPageGet,
     signUpPagePost,
+    authenticateUser,
     logOutGet,
     becomeMemberGet,
     becomeMemberPost,
