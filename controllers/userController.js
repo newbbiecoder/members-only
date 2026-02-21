@@ -2,11 +2,17 @@ const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
 
 async function renderLoginIndexPage(req, res) {
-    const getMessages = await pool.query("SELECT * FROM messages");
+    const {rows} = await pool.query(`
+        SELECT messages.*, users.username, users.fullname
+        FROM messages
+        LEFT JOIN users ON messages.user_id = users.id
+        ORDER BY messages.id DESC
+    `);
+    console.log(rows);
     res.render("index", {
         title: "HomePage",
         user: req.user,
-        messages: getMessages.rows
+        messages: rows
     })
 }
 

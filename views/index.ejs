@@ -26,6 +26,7 @@
                     <div class="message-container">
                         <% messages.forEach(message => { %>
                             <div style="border: 1px solid black; width: 10%; text-align: center; margin-bottom: 1rem;">
+                                <h3>Author: <%= message.username %></h3>
                                 <h4><%= message.title %></h4>
                                 <p><%= message.description %></p>
                             </div>
@@ -51,6 +52,7 @@
                     <div class="message-container">
                         <% messages.forEach(message => { %>
                             <div style="border: 1px solid black; width: 10%; text-align: center; margin-bottom: 1rem;">
+                                <h3>Author: *****</h3>
                                 <h4><%= message.title %></h4>
                                 <p><%= message.description %></p>
                             </div>
