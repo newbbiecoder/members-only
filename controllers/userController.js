@@ -1,10 +1,12 @@
 const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
 
-function renderLoginIndexPage(req, res) {
+async function renderLoginIndexPage(req, res) {
+    const getMessages = await pool.query("SELECT * FROM messages");
     res.render("index", {
         title: "HomePage",
-        user: req.user
+        user: req.user,
+        messages: getMessages.rows
     })
 }
 
@@ -66,11 +68,24 @@ async function becomeMemberPost(req, res) {
     }
 }
 
+function newMessageGet(req, res) {
+    res.render("new-message", {
+        title: "New Message"
+    })
+}
+
+async function newMessagePost(req, res) {
+    await pool.query("INSERT INTO messages (title, description, user_id) VALUES ($1, $2, $3)", [req.body.title, req.body.description, req.user.id]);
+    res.redirect("/");
+}
+
 module.exports = {
     renderLoginIndexPage,
     signUpPageGet,
     signUpPagePost,
     logOutGet,
     becomeMemberGet,
-    becomeMemberPost
+    becomeMemberPost,
+    newMessageGet,
+    newMessagePost
 }

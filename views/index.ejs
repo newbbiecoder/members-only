@@ -20,6 +20,18 @@
                     <p>You need to be a member to post messages !</p>
                     <a href="/become-member">Become A Member!!</a>
                 <% } %>
+
+                <% if(messages.length !== 0) { %>
+                    <h1>Messages</h1>
+                    <div class="message-container">
+                        <% messages.forEach(message => { %>
+                            <div style="border: 1px solid black; width: 10%; text-align: center; margin-bottom: 1rem;">
+                                <h4><%= message.title %></h4>
+                                <p><%= message.description %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
                 <a href="/log-out">LOG OUT</a>
             </div>
         <% } else { %>
@@ -33,6 +45,19 @@
 
                 <button type="submit">Log In</button>
                 <hr>
+
+                <% if(messages.length !== 0) { %>
+                    <h1>Messages</h1>
+                    <div class="message-container">
+                        <% messages.forEach(message => { %>
+                            <div style="border: 1px solid black; width: 10%; text-align: center; margin-bottom: 1rem;">
+                                <h4><%= message.title %></h4>
+                                <p><%= message.description %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+
                 <a href="/sign-up">Sign Up?</a>
             </form>
         <% } %>

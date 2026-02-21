@@ -1,5 +1,5 @@
 const {Router} = require("express");
-const {renderLoginIndexPage, signUpPageGet, signUpPagePost, logOutGet, becomeMemberGet, becomeMemberPost} = require("../controllers/userController");
+const {renderLoginIndexPage, signUpPageGet, signUpPagePost, logOutGet, becomeMemberGet, becomeMemberPost, newMessageGet, newMessagePost} = require("../controllers/userController");
 const passport = require("passport");
 
 const indexRouter = Router();
@@ -15,6 +15,8 @@ indexRouter.post("/log-in",
 )
 indexRouter.get("/become-member", becomeMemberGet);
 indexRouter.post("/become-member", becomeMemberPost)
+indexRouter.get("/new-message", newMessageGet);
+indexRouter.post("/new-message", newMessagePost)
 indexRouter.get("/log-out", logOutGet)
 
 module.exports = indexRouter;
