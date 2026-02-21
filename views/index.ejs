@@ -5,8 +5,23 @@
     </head>
     <body>
         <% if(locals.user) { %>
-            <h1>Welcome back <% user.username %></h1>
-            <a href="/log-out">LOG OUT</a>
+            <div class="container">
+                <h1>Welcome back <%= user.fullname %></h1>
+                <% if(success_msg.length > 0) { %>
+                    <div>
+                        <%= success_msg %>
+                    </div>
+                <% } %>
+                <% if(user.memberstatus) { %>
+                    <p>Member Badge</p>
+                    <a href="/new-message">New Message</a>
+                <% } %>
+                <% if(!user.memberstatus) { %>
+                    <p>You need to be a member to post messages !</p>
+                    <a href="/become-member">Become A Member!!</a>
+                <% } %>
+                <a href="/log-out">LOG OUT</a>
+            </div>
         <% } else { %>
             <h1>Please log in</h1>
             <form action="/log-in" method="POST">

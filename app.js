@@ -3,6 +3,7 @@ require("dotenv").config({path: ".env"});
 const express = require("express");
 const expressSession = require("express-session");
 const passport = require("passport");
+const flash = require("connect-flash");
 const path = require("node:path");
 const indexRouter = require("./routes/indexRouter");
 
@@ -30,14 +31,24 @@ app.use(expressSession({
     cookie: {maxAge: 30 * 24 * 60 * 60 * 1000}
 }));
 
+// Require passport config
+require("./config/passport");
+
+// Use flash
+app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success');
+    res.locals.error_msg = req.flash('error');
+    console.log(req.user)
+    next();
+})
+
 // Use our indexRouter
 app.use("/", indexRouter);
-
-// Require passport config
-require("./config/passport");
 
 app.listen(3000, (error) => {
     if(error) {

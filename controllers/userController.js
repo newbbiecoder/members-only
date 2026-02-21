@@ -1,6 +1,5 @@
 const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
-const passport = require("passport");
 
 function renderLoginIndexPage(req, res) {
     res.render("index", {
@@ -41,10 +40,37 @@ function logOutGet(req, res, next) {
     })
 }
 
+function becomeMemberGet(req, res) {
+    res.render("membership-pass", {
+        title: "Become A Member"
+    })
+}
+
+async function becomeMemberPost(req, res) {
+    if(req.body.memberPass === "ilovecats") {
+        await pool.query("UPDATE users SET memberstatus = 't' WHERE id = $1", [req.user.id]);
+        req.flash('success', 'Membership Availed Successfully!');
+        
+        // Force the save before redirecting
+        return req.session.save(() => {
+            res.redirect("/");
+        });
+    }
+    else {
+        req.flash('error', 'Invalid passcode!');
+        
+        // Force the save before redirecting
+        return req.session.save(() => {
+            res.redirect("/become-member");
+        });
+    }
+}
 
 module.exports = {
     renderLoginIndexPage,
     signUpPageGet,
     signUpPagePost,
-    logOutGet
+    logOutGet,
+    becomeMemberGet,
+    becomeMemberPost
 }

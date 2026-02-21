@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title><%= title %></title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <form action="/become-member" method="post">
+            <label for="memberPass">Enter the passcode to become a member: (It's ilovecats) </label>
+            <input type="text" name="memberPass" id="memberPass">
+            <button type="submit">Submit</button>
+            <% if(error_msg.length > 0) { %>
+                <div>
+                    <%= error_msg %>
+                </div>
+            <% } %>
+        </form>
+    </body>
+</html>
