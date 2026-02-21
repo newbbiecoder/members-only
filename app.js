@@ -10,6 +10,8 @@ const indexRouter = require("./routes/indexRouter");
 const PostgresSession = require("connect-pg-simple")(expressSession);
 const pgPool = require("./config/pool");
 
+const CustomNotFoundError = require('./errors/CustomNotFoundError');
+
 const app = express();
 
 app.set("views", path.join(__dirname, "views"));
@@ -48,6 +50,16 @@ app.use((req, res, next) => {
 
 // Use our indexRouter
 app.use("/", indexRouter);
+
+app.use((req, res, next) => {
+    throw new CustomNotFoundError("Trying to be cheeky eh O_O");
+})
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.statusCode || 500).send(`${err.name}: ${err.message}`);
+});
 
 app.listen(3000, (error) => {
     if(error) {
