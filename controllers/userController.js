@@ -8,7 +8,6 @@ async function renderLoginIndexPage(req, res) {
         LEFT JOIN users ON messages.user_id = users.id
         ORDER BY messages.id DESC
     `);
-    console.log(rows);
     res.render("index", {
         title: "HomePage",
         user: req.user,
@@ -85,6 +84,28 @@ async function newMessagePost(req, res) {
     res.redirect("/");
 }
 
+async function deleteMessagePost(req, res) {
+    const messageId = req.params.id;
+    await pool.query("DELETE FROM messages WHERE id = $1", [messageId]);
+    res.redirect("/");
+}
+
+async function updateMessageGet(req, res) {
+    const messageId = req.params.id;
+    const {rows} = await pool.query("SELECT * FROM messages WHERE id = $1", [messageId]);
+    console.log(rows)
+    res.render("edit-message", {
+        title: "Edit Message",
+        message: rows[0]
+    })
+}
+
+async function updateMessagePost(req, res) {
+    const messageId = req.params.id;
+    await pool.query("UPDATE messages SET title = $1, description = $2 WHERE id = $3", [req.body.title, req.body.description, messageId]);
+    res.redirect("/");
+}
+
 module.exports = {
     renderLoginIndexPage,
     signUpPageGet,
@@ -93,5 +114,8 @@ module.exports = {
     becomeMemberGet,
     becomeMemberPost,
     newMessageGet,
-    newMessagePost
+    newMessagePost,
+    deleteMessagePost,
+    updateMessageGet,
+    updateMessagePost
 }

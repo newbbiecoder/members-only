@@ -30,6 +30,11 @@
                                 <h4><%= message.title %></h4>
                                 <p><%= message.description %></p>
                             </div>
+
+                            <form action="/<%= message.id %>/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this?')">
+                                <button type="submit">Delete</button>
+                            </form>
+                            <a href="/<%= message.id %>/update">Update</a>
                         <% }) %>
                     </div>
                 <% } %>
