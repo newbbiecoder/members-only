@@ -33,6 +33,9 @@ const validateUser = [
     .isLength({min: 1, max: 10}).withMessage(`Last Name ${lengthErr}`),
 
     body("password").trim().isLength({min: 6, max: 25}).withMessage("Password should be atleast 6 characters long"),
+    body("confirmPassword").custom((value, {req}) => {
+        return value === req.body.password
+    }).withMessage("Passwords do not match!"),
 
     body("username").trim()
     .isLength({min: 1, max: 10}).withMessage(`Username ${lengthErr}`),
