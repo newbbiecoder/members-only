@@ -1,5 +1,6 @@
 const pool = require("../config/pool");
 const bcrypt = require("bcryptjs");
+const {body, validationResult, matchedData} = require("express-validator")
 
 async function renderLoginIndexPage(req, res, next) {
     try {
@@ -19,6 +20,24 @@ async function renderLoginIndexPage(req, res, next) {
     }
 }
 
+const alphaErr = "must only contain letters.";
+const lengthErr = "must be between 1 and 10 characters.";
+
+const validateUser = [
+    body("firstName").trim()
+    .isAlpha().withMessage(`First Name ${alphaErr}`)
+    .isLength({min: 1, max: 10}).withMessage(`First Name ${lengthErr}`),
+
+    body("lastName").trim()
+    .isAlpha().withMessage(`Last Name ${alphaErr}`)
+    .isLength({min: 1, max: 10}).withMessage(`Last Name ${lengthErr}`),
+
+    body("password").trim().isLength({min: 6, max: 25}).withMessage("Password should be atleast 6 characters long"),
+
+    body("username").trim()
+    .isLength({min: 1, max: 10}).withMessage(`Username ${lengthErr}`),
+]
+
 function signUpPageGet(req, res, next) {
     try {
         res.render("sign-up-form", {
@@ -29,22 +48,34 @@ function signUpPageGet(req, res, next) {
     }
 }
 
-async function signUpPagePost(req, res, next) {
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        await pool.query("INSERT INTO users (username, fullname, password, memberstatus, isadmin) VALUES ($1, $2, $3, $4, $5)", [
-            req.body.username,
-            req.body.firstName + " " + req.body.lastName,
-            hashedPassword,
-            false,
-            false,
-        ])
-        res.redirect("/");
+let signUpPagePost = [
+    validateUser,
+    async (req, res, next) => {
+        try {
+            const errors = validationResult(req);
+            if(!errors.isEmpty()){
+                return res.status(400).render("sign-up-form", {
+                    title: "Sign Up",
+                    errors: errors.array(),
+                });
+            }
+            const {password} = matchedData(req);
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            await pool.query("INSERT INTO users (username, fullname, password, memberstatus, isadmin) VALUES ($1, $2, $3, $4, $5)", [
+                req.body.username,
+                req.body.firstName + " " + req.body.lastName,
+                hashedPassword,
+                false,
+                false,
+            ])
+            res.redirect("/");
+        }
+        catch(err) {
+            return next(err);
+        }
     }
-    catch(err) {
-        return next(err);
-    }
-}
+]
 
 function logOutGet(req, res, next) {
     try {
