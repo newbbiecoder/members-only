@@ -73,9 +73,7 @@ let signUpPagePost = [
                 false,
                 false,
             ])
-            res.render("index", {
-                message: info.message
-            });
+            res.redirect("/");
         }
         catch(err) {
             return next(err);
